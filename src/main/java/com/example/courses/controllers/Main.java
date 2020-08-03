@@ -10,7 +10,7 @@ public class Main {
 
     @GetMapping("/")
     public String home( Model model) {
-        return "index";
+        return "home";
     }
 
 }
