@@ -14,6 +14,17 @@ public class Currency {
     private  String Name;
     private  String Char;
 
+
+    public Currency(){
+
+    }
+
+    public Currency(Long id, String Name, String Char){
+        this.id     = id;
+        this.Name   = Name;
+        this.Char   = Char;
+    }
+
     public Long getId() {
         return id;
     }
