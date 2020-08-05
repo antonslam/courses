@@ -102,11 +102,7 @@ public class Get {
 
 
     public static void GetCourse(CourseRepo courseRepo) {
-//        Currency currency = new Currency();
-//        currency.setId((long) 954);
-//        Course course = new Course(LocalDate.now(), 1, (float) 1, currency);
-//
-//        currencyRepo.save(course);
+
         LocalDate date1 = LocalDate.now();
         Document document = null;
         SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");

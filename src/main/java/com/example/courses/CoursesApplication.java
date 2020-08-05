@@ -34,7 +34,7 @@ public class CoursesApplication {
 			Get.GetCurrency(currencyRepo);
 		}
 
-		Course course = courseRepo.findByDate(LocalDate.now());
+		Course course = courseRepo.OneBydate(LocalDate.now());
 		if (course == null){
 			Get.GetCourse(courseRepo);
 		}
