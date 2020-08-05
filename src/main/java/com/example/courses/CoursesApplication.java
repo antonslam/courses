@@ -1,6 +1,8 @@
 package com.example.courses;
 
+import com.example.courses.entities.Course;
 import com.example.courses.entities.Currency;
+import com.example.courses.repos.CourseRepo;
 import com.example.courses.repos.CurrencyRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -8,26 +10,34 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.event.EventListener;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.IOException;
+import java.time.LocalDate;
 
 @SpringBootApplication
 public class CoursesApplication {
 
 	public static void main(String[] args) {
-		ConfigurableApplicationContext context =SpringApplication.run(CoursesApplication.class, args);
+		SpringApplication.run(CoursesApplication.class, args);
 	}
 
 	@Autowired
 	CurrencyRepo currencyRepo;
 
+	@Autowired
+	CourseRepo courseRepo;
+
 	@EventListener(ApplicationReadyEvent.class)
-	public void AddCurrency() throws IOException, SAXException, ParserConfigurationException {
+	public void AddCurrency(){
+
 		Currency Line = currencyRepo.getOne();
 		if (Line == null){
 			Get.GetCurrency(currencyRepo);
 		}
+
+		Course course = courseRepo.findByDate(LocalDate.now());
+		if (course == null){
+			Get.GetCourse(courseRepo);
+		}
+
 	}
 }

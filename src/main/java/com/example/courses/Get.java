@@ -1,6 +1,8 @@
 package com.example.courses;
 
+import com.example.courses.entities.Course;
 import com.example.courses.entities.Currency;
+import com.example.courses.repos.CourseRepo;
 import com.example.courses.repos.CurrencyRepo;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -18,15 +20,18 @@ import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.Date;
 
 public class Get {
 
-    public static void GetCurrency(CurrencyRepo currencyRepo) throws ParserConfigurationException, IOException, SAXException {
+    private static Document GetDocument(String url_s) throws IOException, SAXException, ParserConfigurationException {
 
         StringBuilder responseBuilder = new StringBuilder();
         try {
             // Create a URLConnection object for a URL
-            URL url = new URL( "http://www.cbr.ru/scripts/XML_valFull.asp" );
+            URL url = new URL(url_s);
             URLConnection conn = url.openConnection();
             HttpURLConnection httpConn;
 
@@ -48,7 +53,22 @@ public class Get {
 
 
         InputSource is = new InputSource(new StringReader(responseBuilder.toString()));
-        Document document = builder.parse(is);
+        return builder.parse(is);
+        
+    }
+
+
+
+    public static void GetCurrency(CurrencyRepo currencyRepo){
+        Document document = null;
+
+        try {
+            document = GetDocument("http://www.cbr.ru/scripts/XML_valFull.asp");
+        } catch (IOException | SAXException | ParserConfigurationException e) {
+            e.printStackTrace();
+        }
+
+        assert document != null;
 
         NodeList Valuta = document.getDocumentElement().getChildNodes();
         for (int i = 0; i < Valuta.getLength(); i++) {
@@ -78,9 +98,58 @@ public class Get {
                 currencyRepo.save(currency);
             }
         }
-
     }
 
 
+    public static void GetCourse(CourseRepo courseRepo) {
+//        Currency currency = new Currency();
+//        currency.setId((long) 954);
+//        Course course = new Course(LocalDate.now(), 1, (float) 1, currency);
+//
+//        currencyRepo.save(course);
+        LocalDate date1 = LocalDate.now();
+        Document document = null;
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+        String date = format.format(new Date() );
+        try {
+            document = GetDocument("http://www.cbr.ru/scripts/XML_daily.asp?date_req="+date);
+        } catch (IOException | SAXException | ParserConfigurationException e) {
+            e.printStackTrace();
+        }
 
+        assert document != null;
+
+        NodeList Valuta = document.getDocumentElement().getChildNodes();
+        for (int i = 0; i < Valuta.getLength(); i++) {
+            Node Items  = Valuta.item(i);
+            NodeList Item = Items.getChildNodes();
+
+
+            Long id = null;
+            Integer Nominal = null;
+            Float Value = null;
+
+            for (int j = 0; j < Item.getLength(); j++) {
+                Node item = Item.item(j);
+                String I_name = item.getNodeName();
+                String I_val = item.getTextContent();
+
+                if (I_name.equals("NumCode")){
+                    id = Long.valueOf(I_val);
+                }else if (I_name.equals("Nominal") && !I_val.equals("")){
+                    Nominal = Integer.valueOf(I_val);
+                }else if (I_name.equals("Value") && !I_val.equals("")){
+                    Value = Float.valueOf(I_val.replace(",", "."));
+                }
+
+            }
+            if (Nominal != null && id != null && Value != null){
+                Currency currency = new Currency();
+                currency.setId(id);
+
+                Course course = new Course(date1, Nominal, Value, currency);
+                courseRepo.save(course);
+            }
+        }
+    }
 }

@@ -1,27 +1,45 @@
 package com.example.courses.entities;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
-@Table(name = "Сourse")
-public class Сourse {
+@Table(name = "Course")
+public class Course {
 
     @Id
-    private Date date;
-    private  Integer Nominal;
-    private  Float Value;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private     Long id;
+    private     LocalDate date;
+    private     Integer Nominal;
+    private     Float Value;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "Currency_id")
     private Currency currency;
 
 
-    public Date getDate() {
+    public Course(){}
+    public Course(LocalDate date, Integer Nominal, Float Value, Currency Currency_id){
+        this.date     = date;
+        this.Nominal   = Nominal;
+        this.Value   = Value;
+        this.currency  = Currency_id;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 
