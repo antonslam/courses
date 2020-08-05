@@ -1,13 +1,91 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
       xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
 <head>
     <title>Home</title>
 </head>
 <body>
 <h1 th:inline="text">Hello [[${#httpServletRequest.remoteUser}]]!</h1>
+
+<div id="cur_1">
+<select>
+    <option value="0">RUB ( Российский рубль )</option>
+    <option th:each="Currency : ${CurrencyList}" th:attr="value=${Currency.id}" th:text="${Currency.Char} + ' ( '+ ${Currency.Name} +' ) '"></option>
+</select>
+<input value="0">
+</div>
+
+<div id="cur_2">
+<select>
+    <option value="0">RUB ( Российский рубль )</option>
+    <option th:each="Currency : ${CurrencyList}" th:attr="value=${Currency.id}" th:text="${Currency.Char} + ' ( '+ ${Currency.Name} +' ) '"></option>
+</select>
+<input value="0">
+</div>
+
 <form th:action="@{/logout}" method="post">
     <input type="submit" value="Sign Out"/>
 </form>
+
+<script th:inline="javascript">
+data = JSON.parse([[${course}]]);
+let map = new Map();
+data.forEach(el => map.set(el.currency.id, [el.Value, el.Nominal]));
+map.set(0, [1, 1])
+data = null;
+
+
+
+var cur_1, cur_2, val_1, val_2;
+const addfix = x => ( (x.toString().includes('.')) ? (x.toString().split('.').pop().length) : (0) );
+
+$( "select" )
+  .change(function() {
+        cur_1_ch = cur_1 != $( "select" ).eq(0).val();
+        cur_2_ch = cur_2 != $( "select" ).eq(1).val();
+
+        cur_1 = $( "select" ).eq(0).val();
+        cur_2 = $( "select" ).eq(1).val();
+
+        calc_cur(cur_1_ch);
+  })
+  .trigger( "change" );
+$( "input" )
+  .change(function() {
+        val_1_ch = val_1 != $( "input" ).eq(0).val();
+        val_2_ch = val_2 != $( "input" ).eq(1).val();
+
+        val_1 = $( "input" ).eq(0).val();
+        val_2 = $( "input" ).eq(1).val();
+
+        calc_cur(val_1_ch);
+  })
+  .trigger( "change" );
+
+function calc_cur(bl_1){
+    console.log('calc');
+    if (cur_1 != cur_2){
+        if (bl_1){
+
+                val2 = map.get( parseInt(cur_1));
+                val1 = map.get( parseInt(cur_2));
+                val_2 = ( (val_1*(1/val1[0])*val2[1]) / ((1/val2[0]) * val2[1])  ).toFixed(2 + addfix(val_1));
+                $('#cur_2').find('input').val( val_2 );
+
+        }else{
+
+                val1 = map.get( parseInt(cur_1));
+                val2 = map.get( parseInt(cur_2));
+                val_1 = ( (val_2*(1/val1[0])*val2[1]) / ((1/val2[0]) * val2[1])  ).toFixed(2 + addfix(val_2));
+                $('#cur_1').find('input').val( val_1 );
+
+        }
+    }
+
+}
+
+</script>
+
 </body>
 </html>
