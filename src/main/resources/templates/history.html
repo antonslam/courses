@@ -6,5 +6,49 @@
 </head>
 <body>
 <h1>History</h1>
+
+<form method="post" action="history">
+
+    <h3>Поиск</h3>
+
+    <input type="date" name="date">
+
+    <select name="first_Currency">
+        <option></option>
+        <option th:each="Currency : ${CurrencyList}" th:attr="value=${Currency.id}" th:text="${Currency.Char}"></option>
+    </select>
+
+    <select name="second_Currency">
+        <option></option>
+        <option th:each="Currency : ${CurrencyList}" th:attr="value=${Currency.id}" th:text="${Currency.Char}"></option>
+    </select>
+
+    <button type="submit">Найти</button>
+
+</form>
+
+
+<table>
+    <thead>
+    <tr>
+        <th>Исходная валюта</th>
+        <th>Целевая валюта</th>
+        <th>Исходная сумма</th>
+        <th>Получаемая сумма</th>
+        <th>Дата</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="History : ${HistoryList}">
+        <td th:text="${History.first_Currency.Char} + ' ( '+ ${History.first_Currency.Name} +' ) '"></td>
+        <td th:text="${History.second_Currency.Char} + ' ( '+ ${History.second_Currency.Name} +' ) '"></td>
+        <td th:text="${History.f_value}"></td>
+        <td th:text="${History.s_value}"></td>
+        <td th:text="${History.date}"></td>
+    </tr>
+    </tbody>
+</table>
+
+
 </body>
 </html>

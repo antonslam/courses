@@ -4,13 +4,15 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
 <head>
     <title>Home</title>
+    <meta name="_csrf" content="${_csrf.token}"/>
+    <!-- default header name is X-CSRF-TOKEN -->
+    <meta name="_csrf_header" content="${_csrf.headerName}"/>
 </head>
 <body>
 <h1 th:inline="text">Hello [[${#httpServletRequest.remoteUser}]]!</h1>
 
 <div id="cur_1">
 <select>
-    <option value="0">RUB ( Российский рубль )</option>
     <option th:each="Currency : ${CurrencyList}" th:attr="value=${Currency.id}" th:text="${Currency.Char} + ' ( '+ ${Currency.Name} +' ) '"></option>
 </select>
 <input value="0">
@@ -18,7 +20,7 @@
 
 <div id="cur_2">
 <select>
-    <option value="0">RUB ( Российский рубль )</option>
+
     <option th:each="Currency : ${CurrencyList}" th:attr="value=${Currency.id}" th:text="${Currency.Char} + ' ( '+ ${Currency.Name} +' ) '"></option>
 </select>
 <input value="0">
@@ -40,6 +42,38 @@ data = null;
 var cur_1, cur_2, val_1, val_2;
 const addfix = x => ( (x.toString().includes('.')) ? (x.toString().split('.').pop().length) : (0) );
 
+
+function addHistory(bl_1){
+        if(val_1 == 0 && val_2 ==0){return;}
+
+        if(bl_1){
+        var json_ =
+            {
+            first_Currency: {id: parseInt(cur_1)},
+            second_Currency: {id: parseInt(cur_2)},
+            f_value: val_1,
+            s_value: val_2,
+            }
+        }else{
+            var json_ =
+            {
+            first_Currency: {id: parseInt(cur_2)},
+            second_Currency: {id: parseInt(cur_1)},
+            f_value: val_2,
+            s_value: val_1,
+            }
+
+       }
+       console.log(json_);
+ fetch(
+  '/AddHistory',
+  {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(json_)
+  }
+).then(console.log);
+}
 $( "select" )
   .change(function() {
         cur_1_ch = cur_1 != $( "select" ).eq(0).val();
@@ -81,6 +115,7 @@ function calc_cur(bl_1){
                 $('#cur_1').find('input').val( val_1 );
 
         }
+        addHistory(bl_1);
     }
 
 }

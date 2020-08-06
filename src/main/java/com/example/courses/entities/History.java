@@ -2,6 +2,7 @@ package com.example.courses.entities;
 
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.Date;
 
 
@@ -12,7 +13,7 @@ public class History {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private Date date;
+    private LocalDate date;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "first_Currency")
@@ -25,6 +26,16 @@ public class History {
     private Float f_value;
     private Float s_value;
 
+    public History(){
+
+    }
+    public History(Currency first_Currency, Currency second_Currency, Float f_value, Float s_value){
+        this.date               = LocalDate.now();
+        this.first_Currency     = first_Currency;
+        this.second_Currency    = second_Currency;
+        this.f_value            = f_value;
+        this.s_value            = s_value;
+    }
 
     public Long getId() {
         return id;
@@ -34,12 +45,12 @@ public class History {
         this.id = id;
     }
 
-    public Date getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public void setDate() {
+        this.date = LocalDate.now();
     }
 
     public Currency getFirst_Currency() {

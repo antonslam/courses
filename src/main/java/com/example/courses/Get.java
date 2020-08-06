@@ -98,6 +98,9 @@ public class Get {
                 currencyRepo.save(currency);
             }
         }
+
+        Currency currency = new Currency((long) 0, "Российский рубль", "RUB");
+        currencyRepo.save(currency);
     }
 
 
