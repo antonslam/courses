@@ -7,15 +7,39 @@
     <meta name="_csrf" content="${_csrf.token}"/>
     <!-- default header name is X-CSRF-TOKEN -->
     <meta name="_csrf_header" content="${_csrf.headerName}"/>
+    <style>
+  form {
+    width: 40vh;min-width: 400px;margin: auto;text-align: center;}
+input , select {
+    padding: 4px;margin-bottom: 10px;font-size: 18px;border: none;background: #f3f3f3;border-bottom: 2px solid gray;}
+form>div {margin: 25px;}
+a {
+    background: lightgray;text-decoration: none;font-size: 1.3em;padding: 15px;border-radius: 5px;color: black;text-transform: uppercase;box-shadow: 2px 2px 0px 0px #949494;}
+div#cur_1,div#cur_2 {
+    display: inline-block;vertical-align: middle;}
+div#cur_1>*, div#cur_2>* {
+    display: block;}
+table {
+    margin: auto;padding: 20px;}
+thead {
+    background: lightgray;}
+tr:nth-child(2n) {
+    background: lightblue;}
+th, td {
+    padding: 5px;text-align: center;}
+</style>
+
 </head>
 <body>
-<h1 th:inline="text">Hello [[${#httpServletRequest.remoteUser}]]!</h1>
+<h1>Home</h1>
+
+<h3 th:inline="text">Hello [[${#httpServletRequest.remoteUser}]]!</h3>
 
 <div id="cur_1">
 <select>
     <option th:each="Currency : ${CurrencyList}" th:attr="value=${Currency.id}" th:text="${Currency.Char} + ' ( '+ ${Currency.Name} +' ) '"></option>
 </select>
-<input value="0">
+<input value="0" type="number">
 </div>
 
 <div id="cur_2">
@@ -23,8 +47,12 @@
 
     <option th:each="Currency : ${CurrencyList}" th:attr="value=${Currency.id}" th:text="${Currency.Char} + ' ( '+ ${Currency.Name} +' ) '"></option>
 </select>
-<input value="0">
+<input value="0" type="number">
 </div>
+
+
+<br><br>
+<a th:href="@{/history}">History</a>
 
 <form th:action="@{/logout}" method="post">
     <input type="submit" value="Sign Out"/>
